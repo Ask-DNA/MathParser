@@ -1173,32 +1173,6 @@ public class Parser
         return lambdaExpression.Compile();
     }
 
-    #region KeywordClass
-
-    private enum KeywordType
-    {
-        Name,
-        Literal,
-        Operator,
-        LeftParenthesis,
-        RightParenthesis,
-        ArgumentSeparator
-    }
-
-    private enum KeywordSubtype
-    {
-        Constant,
-        Function,
-        Argument,
-        PrefixOperator,
-        InfixOperator,
-        PostfixOperator
-    }
-
-    private record Keyword(string Word, int OriginalPosition, KeywordType Type, KeywordSubtype? Subtype);
-
-    #endregion
-
     #region ArgumentTypizationHandlerClass
 
     private class ArgumentTypizationHandler

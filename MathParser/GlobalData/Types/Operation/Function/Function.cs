@@ -8,147 +8,147 @@ public class Function : Operation
 
     internal static Function Abs
     {
-        get => ArithmeticalFunctionOfOneArgument("Abs", MathSource.Abs);
+        get => ArithmeticalFunctionOfOneArgument("Abs", FunctionSource.Abs);
     }
 
     internal static Function Sqrt
     {
-        get => ArithmeticalFunctionOfOneArgument("Sqrt", MathSource.Sqrt);
+        get => ArithmeticalFunctionOfOneArgument("Sqrt", FunctionSource.Sqrt);
     }
 
     internal static Function Cbrt
     {
-        get => ArithmeticalFunctionOfOneArgument("Cbrt", MathSource.Cbrt);
+        get => ArithmeticalFunctionOfOneArgument("Cbrt", FunctionSource.Cbrt);
     }
 
     internal static Function Exp
     {
-        get => ArithmeticalFunctionOfOneArgument("Exp", MathSource.Exp);
+        get => ArithmeticalFunctionOfOneArgument("Exp", FunctionSource.Exp);
     }
 
     internal static Function Pow
     {
-        get => ArithmeticalFunctionOfTwoArguments("Pow", MathSource.Pow);
+        get => ArithmeticalFunctionOfTwoArguments("Pow", FunctionSource.Pow);
     }
 
     internal static Function Log
     {
-        get => ArithmeticalFunctionOfTwoArguments("Log", MathSource.Log);
+        get => ArithmeticalFunctionOfTwoArguments("Log", FunctionSource.Log);
     }
 
     internal static Function Log2
     {
-        get => ArithmeticalFunctionOfOneArgument("Log2", MathSource.Log2);
+        get => ArithmeticalFunctionOfOneArgument("Log2", FunctionSource.Log2);
     }
 
     internal static Function Log10
     {
-        get => ArithmeticalFunctionOfOneArgument("Log10", MathSource.Log10);
+        get => ArithmeticalFunctionOfOneArgument("Log10", FunctionSource.Log10);
     }
 
     internal static Function Ln
     {
-        get => ArithmeticalFunctionOfOneArgument("Ln", MathSource.Ln);
+        get => ArithmeticalFunctionOfOneArgument("Ln", FunctionSource.Ln);
     }
 
     internal static Function Sin
     {
-        get => ArithmeticalFunctionOfOneArgument("Sin", MathSource.Sin);
+        get => ArithmeticalFunctionOfOneArgument("Sin", FunctionSource.Sin);
     }
 
     internal static Function Cos
     {
-        get => ArithmeticalFunctionOfOneArgument("Cos", MathSource.Cos);
+        get => ArithmeticalFunctionOfOneArgument("Cos", FunctionSource.Cos);
     }
 
     internal static Function Tan
     {
-        get => ArithmeticalFunctionOfOneArgument("Tan", MathSource.Tan);
+        get => ArithmeticalFunctionOfOneArgument("Tan", FunctionSource.Tan);
     }
 
     internal static Function Asin
     {
-        get => ArithmeticalFunctionOfOneArgument("Asin", MathSource.Asin);
+        get => ArithmeticalFunctionOfOneArgument("Asin", FunctionSource.Asin);
     }
 
     internal static Function Acos
     {
-        get => ArithmeticalFunctionOfOneArgument("Acos", MathSource.Acos);
+        get => ArithmeticalFunctionOfOneArgument("Acos", FunctionSource.Acos);
     }
 
     internal static Function Atan
     {
-        get => ArithmeticalFunctionOfOneArgument("Atan", MathSource.Atan);
+        get => ArithmeticalFunctionOfOneArgument("Atan", FunctionSource.Atan);
     }
 
     internal static Function Sinh
     {
-        get => ArithmeticalFunctionOfOneArgument("Sinh", MathSource.Sinh);
+        get => ArithmeticalFunctionOfOneArgument("Sinh", FunctionSource.Sinh);
     }
 
     internal static Function Cosh
     {
-        get => ArithmeticalFunctionOfOneArgument("Cosh", MathSource.Cosh);
+        get => ArithmeticalFunctionOfOneArgument("Cosh", FunctionSource.Cosh);
     }
 
     internal static Function Tanh
     {
-        get => ArithmeticalFunctionOfOneArgument("Tanh", MathSource.Tanh);
+        get => ArithmeticalFunctionOfOneArgument("Tanh", FunctionSource.Tanh);
     }
 
     internal static Function Asinh
     {
-        get => ArithmeticalFunctionOfOneArgument("Asinh", MathSource.Asinh);
+        get => ArithmeticalFunctionOfOneArgument("Asinh", FunctionSource.Asinh);
     }
 
     internal static Function Acosh
     {
-        get => ArithmeticalFunctionOfOneArgument("Acosh", MathSource.Acosh);
+        get => ArithmeticalFunctionOfOneArgument("Acosh", FunctionSource.Acosh);
     }
 
     internal static Function Atanh
     {
-        get => ArithmeticalFunctionOfOneArgument("Atanh", MathSource.Atanh);
+        get => ArithmeticalFunctionOfOneArgument("Atanh", FunctionSource.Atanh);
     }
 
     internal static Function Not
     {
-        get => LogicalFunctionOfOneArgument("Not", MathSource.Not);
+        get => LogicalFunctionOfOneArgument("Not", FunctionSource.Not);
     }
 
     internal static Function And
     {
-        get => LogicalFunctionOfTwoArguments("And", MathSource.And);
+        get => LogicalFunctionOfTwoArguments("And", FunctionSource.And);
     }
 
     internal static Function Or
     {
-        get => LogicalFunctionOfTwoArguments("Or", MathSource.Or);
+        get => LogicalFunctionOfTwoArguments("Or", FunctionSource.Or);
     }
 
     internal static Function Eqv
     {
-        get => LogicalFunctionOfTwoArguments("Eqv", MathSource.Eqv);
+        get => LogicalFunctionOfTwoArguments("Eqv", FunctionSource.Eqv);
     }
 
     internal static Function Imp
     {
-        get => LogicalFunctionOfTwoArguments("Imp", MathSource.Imp);
+        get => LogicalFunctionOfTwoArguments("Imp", FunctionSource.Imp);
     }
 
     internal static Function Xor
     {
-        get => LogicalFunctionOfTwoArguments("Xor", MathSource.Xor);
+        get => LogicalFunctionOfTwoArguments("Xor", FunctionSource.Xor);
     }
 
     internal static Function Nand
     {
-        get => LogicalFunctionOfTwoArguments("Nand", MathSource.Nand);
+        get => LogicalFunctionOfTwoArguments("Nand", FunctionSource.Nand);
     }
 
     internal static Function Nor
     {
-        get => LogicalFunctionOfTwoArguments("Nor", MathSource.Nor);
+        get => LogicalFunctionOfTwoArguments("Nor", FunctionSource.Nor);
     }
 
     #endregion

@@ -42,12 +42,9 @@ public class Parser
     {
         expression = null;
 
-        if (!PreliminaryCheck(expressionString, out ArgumentException? exception))
-        {
-            exceptions = [exception!];
+        if (!PreliminaryCheck(expressionString, out exceptions))
             return false;
-        }
-
+        
         List<ArgumentException> exceptionsTmp = [];
 
         if (!ParsingProcess(expressionString, out Keyword[] expressionKeywords, out exceptions))
@@ -86,37 +83,39 @@ public class Parser
 
     #region PreliminaryCheck
 
-    private static bool PreliminaryCheck(string expressionString, out ArgumentException? exception)
+    private static bool PreliminaryCheck(string expressionString, out ArgumentException[] exceptions)
     {
         if (string.IsNullOrWhiteSpace(expressionString))
         {
-            exception = ExceptionBuilder.ExpressionStringIsNullOrWhitespaceException();
+            exceptions = [ExceptionBuilder.ExpressionStringIsNullOrWhitespaceException()];
             return false;
         }
-        if (!ValidateCharacters(expressionString, out exception))
+        if (!ValidateCharacters(expressionString, out exceptions))
             return false;
-        if (!ValidateParenthesis(expressionString, out exception))
+        if (!ValidateParenthesis(expressionString, out ArgumentException? exception))
+        {
+            exceptions = [exception!];
             return false;
+        }
         if (!ContainsLiteralsOrNames(expressionString, out exception))
+        {
+            exceptions = [exception!];
             return false;
+        }
 
-        exception = null;
+        exceptions = [];
         return true;
     }
 
-    private static bool ValidateCharacters(string expressionString, out ArgumentException? invalidCharactersException)
+    private static bool ValidateCharacters(string expressionString, out ArgumentException[] invalidCharacterExceptions)
     {
-        List<int> invalidCharacterIndices = [];
+        List<ArgumentException> exceptionsTmp = [];
         for (int i = 0; i < expressionString.Length; i++)
             if (!ParserGlobal.ValidateCharacter(expressionString[i]))
-                invalidCharacterIndices.Add(i);
+                exceptionsTmp.Add(ExceptionBuilder.InvalidCharacterException(i));
 
-        if (invalidCharacterIndices.Count != 0)
-            invalidCharactersException = ExceptionBuilder.InvalidCharactersException([.. invalidCharacterIndices]);
-        else
-            invalidCharactersException = null;
-
-        return invalidCharactersException is null;
+        invalidCharacterExceptions = [.. exceptionsTmp];
+        return invalidCharacterExceptions.Length == 0;
     }
 
     private static bool ValidateParenthesis(string expressionString, out ArgumentException? invalidParenthesisException)
@@ -159,16 +158,16 @@ public class Parser
         List<ArgumentException> exceptionsTmp = [];
 
         expressionKeywords = SplitToKeywordArray(expressionString);
-        if (!ValidateLiterals(expressionKeywords, out ArgumentException? invalidLiteralsException))
-            exceptionsTmp.Add(invalidLiteralsException!);
-        if (!ValidateNames(expressionKeywords, out ArgumentException? invalidNamesException))
-            exceptionsTmp.Add(invalidNamesException!);
+        if (!ValidateLiterals(expressionKeywords, out ArgumentException[] invalidLiteralExceptions))
+            exceptionsTmp.AddRange(invalidLiteralExceptions);
+        if (!ValidateNames(expressionKeywords, out ArgumentException[] invalidNameExceptions))
+            exceptionsTmp.AddRange(invalidNameExceptions);
 
         SpecifyNames(expressionKeywords);
-        if (!CheckForUndefinedFunctions(expressionKeywords, out ArgumentException? undefinedFunctionsException))
-            exceptionsTmp.Add(undefinedFunctionsException!);
-        if (!CheckForUnexpectedArgumentSeparators(expressionKeywords, out ArgumentException? unexpectedArgumentSeparatorUsageException))
-            exceptionsTmp.Add(unexpectedArgumentSeparatorUsageException!);
+        if (!CheckForUndefinedFunctions(expressionKeywords, out ArgumentException[] undefinedFunctionExceptions))
+            exceptionsTmp.AddRange(undefinedFunctionExceptions);
+        if (!CheckForUnexpectedArgumentSeparators(expressionKeywords, out ArgumentException[] unexpectedArgumentSeparatorUsageExceptions))
+            exceptionsTmp.AddRange(unexpectedArgumentSeparatorUsageExceptions);
 
         exceptions = [.. exceptionsTmp];
         if (exceptions.Length != 0)
@@ -306,36 +305,28 @@ public class Parser
         };
     }
 
-    private static bool ValidateLiterals(Keyword[] expressionKeywords, out ArgumentException? invalidLiteralsException)
+    private static bool ValidateLiterals(Keyword[] expressionKeywords, out ArgumentException[] invalidLiteralExceptions)
     {
-        Dictionary<int, string> invalidLiterals = [];
+        List<ArgumentException> exceptionsTmp = [];
+
         foreach (Keyword k in expressionKeywords)
-            if (k.Type == KeywordType.Literal)
-                if (!ParserGlobal.ValidateLiteral(k.Word))
-                    invalidLiterals.Add(k.OriginalPosition, k.Word);
+            if (k.Type == KeywordType.Literal && !ParserGlobal.ValidateLiteral(k.Word))
+                    exceptionsTmp.Add(ExceptionBuilder.InvalidLiteralException(k.Word, k.OriginalPosition));
 
-        if (invalidLiterals.Count > 0)
-            invalidLiteralsException = ExceptionBuilder.InvalidLiteralsException(invalidLiterals);
-        else
-            invalidLiteralsException = null;
-
-        return invalidLiteralsException is null;
+        invalidLiteralExceptions = [.. exceptionsTmp];
+        return invalidLiteralExceptions.Length == 0;
     }
 
-    private static bool ValidateNames(Keyword[] expressionKeywords, out ArgumentException? invalidNamesException)
+    private static bool ValidateNames(Keyword[] expressionKeywords, out ArgumentException[] invalidNameExceptions)
     {
-        Dictionary<int, string> invalidNames = [];
+        List<ArgumentException> exceptionsTmp = [];
+
         foreach (Keyword k in expressionKeywords)
-            if (k.Type == KeywordType.Name)
-                if (!ParserGlobal.ValidateName(k.Word))
-                    invalidNames.Add(k.OriginalPosition, k.Word);
+            if (k.Type == KeywordType.Name && !ParserGlobal.ValidateName(k.Word))
+                exceptionsTmp.Add(ExceptionBuilder.InvalidNameException(k.Word, k.OriginalPosition));
 
-        if (invalidNames.Count > 0)
-            invalidNamesException = ExceptionBuilder.InvalidNamesException(invalidNames);
-        else
-            invalidNamesException = null;
-
-        return invalidNamesException is null;
+        invalidNameExceptions = [.. exceptionsTmp];
+        return invalidNameExceptions.Length == 0;
     }
 
     private void SpecifyNames(Keyword[] expressionKeywords)
@@ -386,20 +377,17 @@ public class Parser
         return false;
     }
 
-    private bool CheckForUndefinedFunctions(Keyword[] expressionKeywords, out ArgumentException? undefinedFunctionsException)
+    private bool CheckForUndefinedFunctions(Keyword[] expressionKeywords, out ArgumentException[] undefinedFunctionExceptions)
     {
-        Dictionary<int, string> undefinedFunctions = [];
+        List<ArgumentException> exceptionsTmp = [];
+
         foreach (Keyword keyword in expressionKeywords)
             if (keyword.Subtype.HasValue && keyword.Subtype == KeywordSubtype.Function)
                 if (_mathCollection.Functions.FirstOrDefault(f => f.Name == keyword.Word) == null)
-                    undefinedFunctions.Add(keyword.OriginalPosition, keyword.Word);
+                    exceptionsTmp.Add(ExceptionBuilder.UndefinedFunctionException(keyword.Word, keyword.OriginalPosition));
 
-        if (undefinedFunctions.Count > 0)
-            undefinedFunctionsException = ExceptionBuilder.UndefinedFunctionsException(undefinedFunctions);
-        else
-            undefinedFunctionsException = null;
-
-        return undefinedFunctionsException is null;
+        undefinedFunctionExceptions = [.. exceptionsTmp];
+        return undefinedFunctionExceptions.Length == 0;
     }
 
     private bool ValidateFunctionCallings(Keyword[] expressionKeywords, out ArgumentException[] invalidFunctionCallingExceptions)
@@ -454,9 +442,9 @@ public class Parser
     // Argument separator is valid if it is located between parenthesis symbols of function calling expression
     // except cases of nested parenthesis symbols:
     // in expression "f(x, (y, z))" second parenthesis symbol is invalid.
-    private static bool CheckForUnexpectedArgumentSeparators(Keyword[] expressionKeywords, out ArgumentException? unexpectedArgumentSeparatorUsageException)
+    private static bool CheckForUnexpectedArgumentSeparators(Keyword[] expressionKeywords, out ArgumentException[] unexpectedArgumentSeparatorUsageExceptions)
     {
-        List<int> unexpectedArgumentSeparatorIndices = [];
+        List<ArgumentException> exceptionsTmp = [];
 
         int currentDepth = 0;
         Dictionary<int, bool> isFunctionCalling = [];
@@ -477,17 +465,13 @@ public class Parser
                     i++;
                     break;
                 case KeywordType.ArgumentSeparator when isFunctionCalling[currentDepth] == false:
-                    unexpectedArgumentSeparatorIndices.Add(expressionKeywords[i].OriginalPosition);
+                    exceptionsTmp.Add(ExceptionBuilder.UnexpectedArgumentSeparatorUsageException(expressionKeywords[i].OriginalPosition));
                     break;
             }
         }
 
-        if (unexpectedArgumentSeparatorIndices.Count > 0)
-            unexpectedArgumentSeparatorUsageException = ExceptionBuilder.UnexpectedArgumentSeparatorUsageException([.. unexpectedArgumentSeparatorIndices]);
-        else
-            unexpectedArgumentSeparatorUsageException = null;
-
-        return unexpectedArgumentSeparatorUsageException is null;
+        unexpectedArgumentSeparatorUsageExceptions = [.. exceptionsTmp];
+        return unexpectedArgumentSeparatorUsageExceptions.Length == 0;
     }
 
     // The table cell characterizes the need to use an operator between keywords.

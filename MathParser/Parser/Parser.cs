@@ -10,6 +10,8 @@ public class Parser
 
     public bool EnableTypization { get; set; } = true;
 
+    public bool MultiplicationSignInsertion { get; set; } = true;
+
     public MathCollection MathCollection
     {
         get { return _mathCollection.Clone(); }
@@ -77,7 +79,7 @@ public class Parser
     private SyntaxAnalyzer CreateAnalyzer()
     {
         return new(_mathCollection.Constants, _mathCollection.Functions, _mathCollection.PrefixOperatorSymbols,
-                   _mathCollection.InfixOperatorSymbols, _mathCollection.PostfixOperatorSymbols);
+                   _mathCollection.InfixOperatorSymbols, _mathCollection.PostfixOperatorSymbols, MultiplicationSignInsertion);
     }
 
     #region ExpressionBuilding

@@ -190,5 +190,10 @@ internal static class ExceptionBuilder
         return new($"Unable to determine argument type ('{argumentName}')");
     }
 
+    public static ArgumentException InsertedMultiplicationTypizationErrorException()
+    {
+        return new("Typization error while evaluating inserted multiplication operator");
+    }
+
     #endregion
 }

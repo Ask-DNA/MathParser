@@ -26,10 +26,12 @@ internal class OperationNode : SyntaxNode
         ArgumentException? curNodeException = null;
         if (_possibleSignatures.Count == 0)
         {
-            if (_keyword.Type == KeywordType.Operator)
+            if (_keyword.Type == KeywordType.Operator && _keyword.OriginalPosition >= 0)
                 curNodeException = ExceptionBuilder.OperatorTypizationErrorException(_keyword.Word, _keyword.OriginalPosition);
-            else
+            else if (_keyword.Type == KeywordType.Name)
                 curNodeException = ExceptionBuilder.FunctionTypizationErrorException(_keyword.Word, _keyword.OriginalPosition);
+            else
+                curNodeException = ExceptionBuilder.InsertedMultiplicationTypizationErrorException();
         }
         if (_possibleSignatures.Count == 1)
             SetChildrenTypes(_possibleSignatures[0][1..], handler);

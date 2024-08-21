@@ -9,6 +9,7 @@ internal class SyntaxAnalyzer
     private readonly string[] _usedPrefixOperatorSymbols;
     private readonly string[] _usedInfixOperatorSymbols;
     private readonly string[] _usedPostfixOperatorSymbols;
+    private readonly bool _multiplicationSignInsertion;
 
     private readonly List<ArgumentException> _accumulatedExceptions = [];
 
@@ -16,7 +17,8 @@ internal class SyntaxAnalyzer
                           Function[] usedFunctions,
                           string[] usedPrefixOperatorSymbols,
                           string[] usedInfixOperatorSymbols,
-                          string[] usedPostfixOperatorSymbols)
+                          string[] usedPostfixOperatorSymbols,
+                          bool multiplicationSignInsertion)
     {
         _usedConstants = new Constant[usedConstants.Length];
         usedConstants.CopyTo(_usedConstants, 0);
@@ -32,6 +34,8 @@ internal class SyntaxAnalyzer
 
         _usedPostfixOperatorSymbols = new string[usedPostfixOperatorSymbols.Length];
         usedPostfixOperatorSymbols.CopyTo(_usedPostfixOperatorSymbols, 0);
+
+        _multiplicationSignInsertion = multiplicationSignInsertion;
     }
 
     public bool Run(string expressionString,
@@ -65,6 +69,9 @@ internal class SyntaxAnalyzer
             _accumulatedExceptions.CopyTo(exceptions, 0);
             return false;
         }
+
+        if (_multiplicationSignInsertion)
+            expressionKeywords = MultiplicationSignInsertion(expressionKeywords);
 
         ValidateOperatorsUsage(expressionKeywords);
         ValidateNestedExpressionsUsage(expressionKeywords);
@@ -436,6 +443,34 @@ internal class SyntaxAnalyzer
     // [3] - Optional postfix operators
     // [4] - Must not contain operators
     // [ ] - Impossible combination (processed in previous stages)
+    private Keyword[] MultiplicationSignInsertion(Keyword[] expressionKeywords)
+    {
+        List<Keyword> result = [];
+        bool operatorIsRequired;
+        KeywordType curKeywordType, nextKeywordType;
+        for (int i = 0; i < expressionKeywords.Length - 1; i++)
+        {
+            curKeywordType = expressionKeywords[i].Type;
+            nextKeywordType = expressionKeywords[i + 1].Type;
+            operatorIsRequired = (curKeywordType, nextKeywordType) switch
+            {
+                (KeywordType.Operator, _) => false,
+                (_, KeywordType.Operator) => false,
+                (_, KeywordType.RightParenthesis) => false,
+                (_, KeywordType.ArgumentSeparator) => false,
+                (KeywordType.Name, _) when expressionKeywords[i].Subtype != KeywordSubtype.Function => true,
+                (KeywordType.Literal, _) => true,
+                (KeywordType.RightParenthesis, _) => true,
+                _ => false
+            };
+            result.Add(expressionKeywords[i]);
+            if (operatorIsRequired)
+                result.Add(new Keyword("*", -1, KeywordType.Operator, null));
+        }
+        result.Add(expressionKeywords[^1]);
+        return [.. result];
+    }
+
     private bool ValidateOperatorsUsage(Keyword[] expressionKeywords)
     {
         bool valid = true;

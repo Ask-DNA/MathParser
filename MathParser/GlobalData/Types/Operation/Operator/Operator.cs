@@ -116,22 +116,12 @@ internal sealed class Operator : Operation
 
     #region BuiltInComparsionOperators
 
-    internal static Operator DoubleEquality1
-    {
-        get => BinaryRelation(OperatorName.Equality, OperatorCategory.Equality, "=", OperatorSource.Equality);
-    }
-
-    internal static Operator DoubleEquality2
+    internal static Operator DoubleEquality
     {
         get => BinaryRelation(OperatorName.Equality, OperatorCategory.Equality, "==", OperatorSource.Equality);
     }
 
-    internal static Operator BooleanEquality1
-    {
-        get => BinaryLogicalOperator(OperatorName.Equality, OperatorCategory.Equality, "=", OperatorSource.Equality);
-    }
-
-    internal static Operator BooleanEquality2
+    internal static Operator BooleanEquality
     {
         get => BinaryLogicalOperator(OperatorName.Equality, OperatorCategory.Equality, "==", OperatorSource.Equality);
     }

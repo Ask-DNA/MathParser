@@ -130,12 +130,10 @@ internal static partial class ParserGlobal
                 Operator.Implication,
                 Operator.ConverseImplication,
 
-                Operator.DoubleEquality1,
-                Operator.DoubleEquality2,
+                Operator.DoubleEquality,
                 Operator.DoubleInequality1,
                 Operator.DoubleInequality2,
-                Operator.BooleanEquality1,
-                Operator.BooleanEquality2,
+                Operator.BooleanEquality,
                 Operator.BooleanInequality1,
                 Operator.BooleanInequality2,
 
